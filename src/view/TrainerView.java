@@ -18,21 +18,22 @@ public class TrainerView {
         return scanner.nextLine();
     }
 
-    public void showPokemonList(List<Pokemon> pokemons) {
-        System.out.println("\n=== Pokémon Disponibles ===");
+    public void showPokemonList(List<Pokemon> pokemons, boolean[] selectedPokemons) {
+        System.out.println("\n=== Pokemones Disponibles ===");
         for (int i = 0; i < pokemons.size(); i++) {
             Pokemon p = pokemons.get(i);
+            String status = selectedPokemons[i] ? " [SELECCIONADO]" : " [DISPONIBLE]";
             System.out.println((i+1) + ". " + p.getName() +
                     " (" + p.getType() + ") - Ataque: " + p.getCurrentAttack() +
                     ", Defensa: " + p.getCurrentDefense() +
-                    ", HP: " + p.getMaxHp());
+                    ", HP: " + p.getMaxHp() + status);
         }
     }
 
     public int selectPokemon(int pokemonNumber, int max) {
         while (true) {
             try {
-                System.out.print("\nSeleccione Pokémon " + pokemonNumber + " (1-" + max + "): ");
+                System.out.print("\nSeleccione pokemon " + pokemonNumber + " (1-" + max + "): ");
                 int choice = Integer.parseInt(scanner.nextLine());
                 if (choice >= 1 && choice <= max) {
                     return choice;
@@ -48,9 +49,13 @@ public class TrainerView {
         System.out.println("Seleccionado: " + name);
     }
 
+    public void showPokemonAlreadySelected(String name) {
+        System.out.println("ERROR: El pokemon " + name + " ya ha sido seleccionado, elija otro pokemon");
+    }
+
     public void showTrainerHeader(String trainerName) {
         System.out.println("\n=== Entrenador: " + trainerName + " ===");
-        System.out.println("Pokémon en el equipo:");
+        System.out.println("pokemon en el equipo:");
     }
 
     public void showPokemonDetails(int number, String name, String type,

@@ -35,7 +35,7 @@ public class BattleView {
     }
 
     public void showRoundWinner(String winner) {
-        System.out.println(winner + " gana la ronda!");
+        System.out.println(winner + " gana la ronda");
     }
 
     public void showBattleResults(String trainer1, int wins1, String trainer2, int wins2) {
@@ -44,11 +44,11 @@ public class BattleView {
         System.out.println(trainer2 + ": " + wins2 + " victorias");
 
         if (wins1 > wins2) {
-            System.out.println(trainer1 + " es el ganador del combate!");
+            System.out.println(trainer1 + " es el ganador del combate");
         } else if (wins2 > wins1) {
-            System.out.println(trainer2 + " es el ganador del combate!");
+            System.out.println(trainer2 + " es el ganador del combate");
         } else {
-            System.out.println("El combate termina en empate!");
+            System.out.println("El combate termina en empate");
         }
     }
 }

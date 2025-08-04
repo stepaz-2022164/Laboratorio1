@@ -50,7 +50,7 @@ public class BattleController {
                 view.showPokemonFainted(pokemon2.getName());
                 trainer1.addRoundWin();
                 view.showRoundWinner(trainer1.getName());
-                return; // Terminar ronda si un Pokémon se debilita
+                return;
             }
         }
 
@@ -64,7 +64,7 @@ public class BattleController {
                 view.showPokemonFainted(pokemon1.getName());
                 trainer2.addRoundWin();
                 view.showRoundWinner(trainer2.getName());
-                return; // Terminar ronda si un Pokémon se debilita
+                return;
             }
         }
 

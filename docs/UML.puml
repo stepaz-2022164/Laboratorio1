@@ -1,0 +1,152 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontColor black
+skinparam classBackgroundColor white
+skinparam classBorderColor black
+
+package "Model" {
+    class Pokemon {
+        - name: String {final}
+        - type: String {final}
+        - baseAttack: int {final}
+        - baseDefense: int {final}
+        - maxHp: int {final}
+        - currentHp: int
+        - ability: SpecialAbility {final}
+        - attackModifier: int
+        - defenseModifier: int
+        - modifierDuration: int
+
+        + Pokemon(name: String, type: String, attack: int, defense: int, hp: int, ability: SpecialAbility)
+        + getName(): String
+        + getType(): String
+        + getCurrentAttack(): int
+        + getCurrentDefense(): int
+        + getCurrentHp(): int
+        + getMaxHp(): int
+        + getAbility(): SpecialAbility
+        + isFainted(): boolean
+        + takeDamage(damage: int): void
+        + applyAbilityEffect(): void
+        + updateModifiers(): void
+        + restoreHp(): void
+    }
+
+    class SpecialAbility {
+        - name: String {final}
+        - effectType: String {final}
+        - effectValue: int {final}
+        - activationChance: int {final}
+        - random: Random {final}
+
+        + SpecialAbility(name: String, effectType: String, effectValue: int, activationChance: int)
+        + tryToActivate(): boolean
+        + getName(): String
+        + getEffectType(): String
+        + getEffectValue(): int
+        + getActivationChance(): int
+    }
+
+    class Trainer {
+        - name: String {final}
+        - team: Pokemon[4] {final}
+        - usedPokemon: boolean[4] {final}
+        - roundsWon: int
+
+        + Trainer(name: String)
+        + getName(): String
+        + getTeam(): Pokemon[]
+        + getRoundsWon(): int
+        + addPokemon(pokemon: Pokemon, position: int): void
+        + selectPokemon(round: int): Pokemon
+        + resetTeam(): void
+        + addRoundWin(): void
+    }
+
+    class TypeEffectiveness <<utility>> {
+        + {static} getEffectMultiplier(attackerType: String, defenderType: String): int
+    }
+}
+
+package "Controller" {
+    class BattleController {
+        - view: BattleView {final}
+
+        + BattleController(view: BattleView)
+        + startBattle(trainer1: Trainer, trainer2: Trainer): void
+        - playRound(trainer1: Trainer, trainer2: Trainer, round: int): void
+        - calculateDamage(attacker: Pokemon, defender: Pokemon, useAbility: boolean): int
+        - announceWinner(trainer1: Trainer, trainer2: Trainer): void
+    }
+
+    class TrainerController {
+        - view: TrainerView {final}
+        - availablePokemons: List<Pokemon> {final}
+
+        + TrainerController(view: TrainerView)
+        - createPokemonPool(): List<Pokemon>
+        + createTrainer(name: String): Trainer
+        + showTrainerDetails(trainer: Trainer): void
+    }
+}
+
+package "View" {
+    class BattleView {
+        - scanner: Scanner {final}
+
+        + BattleView()
+        + showRoundStart(round: int): void
+        + showPokemonSelected(trainerName: String, pokemonName: String): void
+        + showPokemonHp(currentHp: int, maxHp: int): void
+        + askToUseAbility(pokemonName: String, abilityName: String): boolean
+        + showDamage(attacker: String, defender: String, damage: int): void
+        + showPokemonFainted(pokemonName: String): void
+        + showRoundWinner(winner: String): void
+        + showBattleResults(trainer1: String, wins1: int, trainer2: String, wins2: int): void
+    }
+
+    class TrainerView {
+        - scanner: Scanner {final}
+
+        + TrainerView()
+        + getTrainerName(): String
+        + showPokemonList(pokemons: List<Pokemon>): void
+        + selectPokemon(pokemonNumber: int, max: int): int
+        + showPokemonSelected(name: String): void
+        + showTrainerHeader(trainerName: String): void
+        + showPokemonDetails(number: int, name: String, type: String, attack: int, defense: int, hp: int, maxHp: int): void
+        + showAbilityDetails(ability: SpecialAbility): void
+    }
+
+    class Main <<application>> {
+        + {static} main(args: String[]): void
+    }
+}
+
+' Relaciones
+Pokemon ||--|| SpecialAbility : "has"
+Trainer ||--o{ Pokemon : "contains 4"
+BattleController ||--|| BattleView : "uses"
+TrainerController ||--|| TrainerView : "uses"
+TrainerController ||--o{ Pokemon : "manages pool"
+
+' Dependencias
+BattleController ..> Trainer : "uses"
+BattleController ..> Pokemon : "uses"
+BattleController ..> TypeEffectiveness : "uses"
+TrainerController ..> Trainer : "creates"
+TrainerController ..> Pokemon : "creates"
+TrainerController ..> SpecialAbility : "creates"
+
+Main ..> BattleController : "creates"
+Main ..> TrainerController : "creates"
+Main ..> BattleView : "creates"
+Main ..> TrainerView : "creates"
+Main ..> Trainer : "uses"
+
+BattleView ..> SpecialAbility : "displays"
+TrainerView ..> Pokemon : "displays"
+TrainerView ..> SpecialAbility : "displays"
+
+@enduml

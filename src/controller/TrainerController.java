@@ -10,11 +10,13 @@ import java.util.List;
 
 public class TrainerController {
     private final TrainerView view;
-    private final List<Pokemon> availablePokemons;
+    private final List<Pokemon> pokemonPool;
+    private final boolean[] selectedPokemons;
 
     public TrainerController(TrainerView view) {
         this.view = view;
-        this.availablePokemons = createPokemonPool();
+        this.pokemonPool = createPokemonPool();
+        this.selectedPokemons = new boolean[pokemonPool.size()];
     }
 
     private List<Pokemon> createPokemonPool() {
@@ -42,21 +44,31 @@ public class TrainerController {
 
     public Trainer createTrainer(String name) {
         Trainer trainer = new Trainer(name);
-        List<Pokemon> selectedPokemons = new ArrayList<>();
-
-        view.showPokemonList(availablePokemons);
+        List<Pokemon> trainerSelectedPokemons = new ArrayList<>();
 
         for (int i = 0; i < 4; i++) {
-            int choice = view.selectPokemon(i+1, availablePokemons.size()) - 1;
-            Pokemon selected = availablePokemons.get(choice);
-            selectedPokemons.add(selected);
-            availablePokemons.remove(choice);
+            view.showPokemonList(pokemonPool, selectedPokemons);
 
-            view.showPokemonSelected(selected.getName());
+            int choice;
+            boolean validSelection = false;
+
+            do {
+                choice = view.selectPokemon(i+1, pokemonPool.size()) - 1;
+
+                if (selectedPokemons[choice]) {
+                    view.showPokemonAlreadySelected(pokemonPool.get(choice).getName());
+                } else {
+                    validSelection = true;
+                    selectedPokemons[choice] = true;
+                    Pokemon selected = pokemonPool.get(choice);
+                    trainerSelectedPokemons.add(selected);
+                    view.showPokemonSelected(selected.getName());
+                }
+            } while (!validSelection);
         }
 
-        for (int i = 0; i < selectedPokemons.size(); i++) {
-            trainer.addPokemon(selectedPokemons.get(i), i);
+        for (int i = 0; i < trainerSelectedPokemons.size(); i++) {
+            trainer.addPokemon(trainerSelectedPokemons.get(i), i);
         }
 
         return trainer;
@@ -74,6 +86,12 @@ public class TrainerController {
                         p.getCurrentHp(), p.getMaxHp());
                 view.showAbilityDetails(p.getAbility());
             }
+        }
+    }
+
+    public void resetSelections() {
+        for (int i = 0; i < selectedPokemons.length; i++) {
+            selectedPokemons[i] = false;
         }
     }
 }
